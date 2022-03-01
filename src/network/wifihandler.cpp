@@ -69,6 +69,7 @@ void WiFiNetwork::setUp() {
     WiFi.hostname("SlimeVR FBT Tracker");
     wifiHandlerLogger.info("Loaded credentials for SSID %s and pass length %d", WiFi.SSID().c_str(), WiFi.psk().length());
     wl_status_t status = WiFi.begin(); // Should connect to last used access point, see https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/station-class.html#begin
+
     wifiHandlerLogger.debug("Status: %d", status);
     wifiState = 1;
     wifiConnectionTimeout = millis();
@@ -128,11 +129,14 @@ void WiFiNetwork::upkeep() {
                 return;
                 case 1: // Couldn't connect with first set of credentials
                     #if defined(WIFI_CREDS_SSID) && defined(WIFI_CREDS_PASSWD)
+                    {
                         // Try hardcoded credentials now
-                        WiFi.begin(WIFI_CREDS_SSID, WIFI_CREDS_PASSWD);
+                        wl_status_t status = WiFi.begin(WIFI_CREDS_SSID, WIFI_CREDS_PASSWD);
+                        wifiHandlerLogger.debug("Status: %d", status);
                         wifiConnectionTimeout = millis();
                         wifiHandlerLogger.error("Can't connect from saved credentials, status: %d.", WiFi.status());
-                        wifiHandlerLogger.debug("Trying hardcoded credentials...");
+                        wifiHandlerLogger.debug("Trying hardcoded credentials: %s", WIFI_CREDS_SSID);
+                    }
                     #endif
                     wifiState = 2;
                 return;
@@ -140,7 +144,7 @@ void WiFiNetwork::upkeep() {
                     // Start smart config
                     if(!hadWifi && !WiFi.smartConfigDone() && wifiConnectionTimeout + 11000 < millis()) {
                         if(WiFi.status() != WL_IDLE_STATUS) {
-                            wifiHandlerLogger.error("Can't connect from any credentials, status: %d.", WiFi.status());
+//                            wifiHandlerLogger.error("Can't connect from any credentials, status: %d.", WiFi.status());
                         }
                         startProvisioning();
                     }

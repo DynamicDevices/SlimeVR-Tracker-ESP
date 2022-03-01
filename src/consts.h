@@ -33,6 +33,7 @@
 #define IMU_BNO086 7
 #define IMU_BMI160 8
 #define IMU_ICM20948 9
+#define IMU_MPU6886 10
 
 #define BOARD_SLIMEVR 1
 #define BOARD_SLIMEVR_DEV 2
@@ -42,6 +43,7 @@
 #define BOARD_WEMOSD1MINI 6
 #define BOARD_TTGO_TBASE 7
 #define BOARD_ESP01 8
+#define BOARD_M5STACK 9
 
 #define BAT_EXTERNAL 1
 #define BAT_INTERNAL 2
